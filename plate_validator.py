@@ -35,14 +35,14 @@ def validar_patente(resultado_lpr):
     
     # Obtener el validador del factory. 
     # Si el método no existe, hacemos fallback a 'local' de forma segura.
-    validator = VALIDADORES.get(metodo, validar_patente_local)
+    processor = VALIDADORES.get(metodo, validar_patente_local)
     
     # Opcional: Loguear si se usó el fallback por un método no reconocido
     if metodo not in VALIDADORES:
         print(f"⚠️ Método de validación '{metodo}' no reconocido. Usando validación local por defecto.")
 
     # 3. Ejecutar el validador seleccionado pasándole el objeto completo
-    result = validator(resultado_lpr)
+    result = processor(resultado_lpr)
 
     # Extraer la patente para construir el payload del evento
     if isinstance(resultado_lpr, dict):
