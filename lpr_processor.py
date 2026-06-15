@@ -7,6 +7,8 @@ import subprocess
 import json
 import requests
 import config
+import mqtt_manager
+from datetime import datetime
 
 # Configuración de la ruta del ejecutable de Tesseract
 pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
@@ -156,24 +158,42 @@ def detectar_patente_snapshot_cloud(ruta_imagen):
         print(f"❌ Error en Snapshot Cloud LPR: {e}")
         return None
 
+METODOS_LPR = {
+    'tesseract': detectar_patente_tesseract,
+    'openalpr_local': detectar_patente_openalpr_local,
+    'snapshot_cloud': detectar_patente_snapshot_cloud,
+    'openalpr_cloud': detectar_patente_snapshot_cloud,  # Con redirección
+}
+
 def detectar_patente(ruta_imagen):
     """Procesa la imagen según el LPR_METHOD configurado y devuelve el diccionario estructurado o None."""
     try:
         method = getattr(config, 'LPR_METHOD', 'snapshot_cloud').lower()
-        resultado_crudo = None
         
-        if method == 'tesseract':
-            resultado_crudo = detectar_patente_tesseract(ruta_imagen)
-        elif method == 'openalpr_local':
-            resultado_crudo = detectar_patente_openalpr_local(ruta_imagen)
-        elif method in ('snapshot_cloud', 'openalpr_cloud'):
-            if method == 'openalpr_cloud':
-                print("ℹ️ Redirigiendo de 'openalpr_cloud' a 'snapshot_cloud' según la última configuración del sistema.")
-            resultado_crudo = detectar_patente_snapshot_cloud(ruta_imagen)
-        else:
-            print(f"⚠️ Método LPR no reconocido: '{method}'. Usando Tesseract por defecto.")
-            resultado_crudo = detectar_patente_tesseract(ruta_imagen)
+        # Opcional: Redirección heredada de 'openalpr_cloud' a 'snapshot_cloud'
+        if method == 'openalpr_cloud':
+            print("ℹ️ Redirigiendo de 'openalpr_cloud' a 'snapshot_cloud' según la última configuración del sistema.")
             
+        processor = METODOS_LPR.get(method, detectar_patente_tesseract)
+        
+        # Opcional: Loguear si se usó el fallback por un método no reconocido
+        if method not in METODOS_LPR:
+            print(f"⚠️ Método LPR no reconocido: '{method}'. Usando Tesseract por defecto.")
+            
+        resultado_crudo = processor(ruta_imagen)
+        
+        # 1. Evento de detección LPR (LPR_DETECTION)
+        success = bool(resultado_crudo and resultado_crudo.get("plate"))
+        lpr_payload = {
+            "event": "LPR_DETECTION",
+            "dsc": f"Imagen procesada con el metodo {processor}",
+            "success": success,
+            "result": resultado_crudo,
+            "timestamp": datetime.now().isoformat()
+        }
+        mqtt_manager.publicar_mensaje(config.TOPIC_EVENTO, lpr_payload)
+
+
         if not resultado_crudo or not resultado_crudo.get("plate"):
             return None
             

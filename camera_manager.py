@@ -8,8 +8,9 @@ import storage
 import hardware
 from lpr_processor import detectar_patente
 import mqtt_manager
+import plate_validator
 
-def capturar_y_procesar(patentes_autorizadas):
+def capturar_y_procesar():
     """Realiza la captura de un frame de la cámara y procesa la detección de patentes."""
     print("🚨 Movimiento detectado! Iniciando captura de cámara...")
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -29,30 +30,9 @@ def capturar_y_procesar(patentes_autorizadas):
         cv2.imwrite(img_temp_path, frame)
         resultado_lpr = detectar_patente(img_temp_path)
         
-        # 1. Evento de detección LPR (LPR_DETECTION)
-        success = bool(resultado_lpr and resultado_lpr.get("plate"))
-        lpr_payload = {
-            "event": "LPR_DETECTION",
-            "success": success,
-            "result": resultado_lpr,
-            "timestamp": datetime.now().isoformat()
-        }
-        print(f"📡 Publicando evento LPR_DETECTION por MQTT... Éxito: {success}")
-        mqtt_manager.publicar_mensaje(config.TOPIC_ESTADO, lpr_payload)
-        
         if success:
             patente_detectada = resultado_lpr["plate"]
-            authorized = patente_detectada in patentes_autorizadas
-            
-            # 2. Evento de validación de patente (PLATE_VALIDATION)
-            validation_payload = {
-                "event": "PLATE_VALIDATION",
-                "plate": patente_detectada,
-                "authorized": authorized,
-                "timestamp": datetime.now().isoformat()
-            }
-            print(f"📡 Publicando evento PLATE_VALIDATION por MQTT... Autorizado: {authorized}")
-            mqtt_manager.publicar_mensaje(config.TOPIC_ESTADO, validation_payload)
+            authorized = plate_validator.validar_patente(resultado_lpr)
             
             if authorized:
                 print(f"🔓 Patente AUTORIZADA: {patente_detectada}. Abriendo portón...")

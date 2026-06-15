@@ -26,6 +26,7 @@ MQTT_TOKEN_SEGURO = "mi_secreto_super_seguro_123"
 
 TOPIC_COMANDO = "mi_porton/comando"
 TOPIC_ESTADO = "mi_porton/estado"
+TOPIC_EVENTO = "mi_porton/evento"
 
 # --- ENDPOINTS API ---
 URL_ENDPOINT_PATENTES = "https://tu-servidor.com/api/patentes-autorizadas"

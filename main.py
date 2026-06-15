@@ -47,11 +47,8 @@ if __name__ == "__main__":
             # Esperar a que el PIR detecte movimiento
             hardware.esperar_movimiento()
             
-            # Recargar patentes autorizadas locales por si hubo actualizaciones
-            patentes_actuales = storage.cargar_patentes_locales()
-            
             # Capturar y procesar evento
-            camera_manager.capturar_y_procesar(patentes_actuales)
+            camera_manager.capturar_y_procesar()
             
             # Filtro anti-rebote simple
             time.sleep(3)

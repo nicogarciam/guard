@@ -16,6 +16,8 @@ def publicar_estado(estado):
             mqtt_client.publish(config.TOPIC_ESTADO, json.dumps(payload), retain=True)
         except Exception as e:
             print(f"❌ Error al publicar estado MQTT: {e}")
+    else:
+        print(f"⚠️ Advertencia: No se pudo publicar el estado '{estado}'. El cliente MQTT no está conectado.")
 
 def publicar_mensaje(topic, payload):
     """Publica un diccionario/objeto JSON en un tópico específico."""
@@ -23,8 +25,11 @@ def publicar_mensaje(topic, payload):
     if mqtt_client and mqtt_client.is_connected():
         try:
             mqtt_client.publish(topic, json.dumps(payload), retain=False)
+            print(f"📤 Mensaje publicado exitosamente en el tópico '{topic}': {payload.get('event') or payload}")
         except Exception as e:
             print(f"❌ Error al publicar en {topic}: {e}")
+    else:
+        print(f"⚠️ Advertencia: Intento de publicar en '{topic}' falló. El cliente MQTT no está conectado. Mensaje: {payload.get('event') or payload}")
 
 def _on_connect(client, userdata, flags, rc):
     """Callback ejecutado cuando se logra conectar al broker."""
