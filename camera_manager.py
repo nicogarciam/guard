@@ -13,8 +13,10 @@ import plate_validator
 def capturar_y_procesar():
     """Realiza la captura de un frame de la cámara y procesa la detección de patentes."""
     print("🚨 Movimiento detectado! Iniciando captura de cámara...")
+    storage.inicializar_directorios()
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    img_temp_path = f"temp_{timestamp}.jpg"
+    capturas_dir = getattr(config, 'CAPTURES_DIR', 'capturas')
+    img_temp_path = os.path.join(capturas_dir, f"captura_{timestamp}.jpg")
     
     # Abrir cámara
     cap = cv2.VideoCapture(config.CAMARA_INDEX)
@@ -22,12 +24,13 @@ def capturar_y_procesar():
         print("❌ Error: No se pudo abrir la cámara.")
         return
         
-    time.sleep(0.5)  # Tiempo para que la cámara estabilice el brillo/exposición
+    time.sleep(1)  # Tiempo para que la cámara estabilice el brillo/exposición
     ret, frame = cap.read()
     cap.release()
     
     if ret:
         cv2.imwrite(img_temp_path, frame)
+        print(f"📸 Imagen guardada en: {img_temp_path}")
         resultado_lpr = detectar_patente(img_temp_path)
         
         if resultado_lpr and resultado_lpr.get("plate"):
@@ -44,12 +47,5 @@ def capturar_y_procesar():
         else:
             print("⚠️ No se pudo leer ninguna patente válida en la captura.")
             storage.guardar_en_cola_reportes(img_temp_path, None, "FALLO_LECTURA")
-            
-        # Limpieza: si por alguna razón la imagen no se movió a pendientes_uploads, la eliminamos
-        if os.path.exists(img_temp_path):
-            try:
-                os.remove(img_temp_path)
-            except Exception as e:
-                print(f"❌ Error al eliminar archivo temporal {img_temp_path}: {e}")
     else:
         print("❌ Error al capturar imagen del dispositivo de cámara.")

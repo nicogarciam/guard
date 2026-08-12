@@ -16,6 +16,7 @@ CAMARA_INDEX = 0
 # --- CONFIGURACIÓN DE DIRECTORIOS Y ARCHIVOS ---
 DB_LOCAL = "patentes.json"
 PENDING_DIR = "pendientes_uploads"
+CAPTURES_DIR = "capturas"
 
 # --- CONFIGURACIÓN MQTT (HIVEMQ CLOUD) ---
 MQTT_BROKER = "2d2715a472da427cb5a4b346706179af.s1.eu.hivemq.cloud"

@@ -1,12 +1,15 @@
 # storage.py
 import os
 import json
+import shutil
 from datetime import datetime
 import config
 
 def inicializar_directorios():
-    """Crea la carpeta de pendientes si no existe."""
+    """Crea las carpetas de pendientes y capturas si no existen."""
     os.makedirs(config.PENDING_DIR, exist_ok=True)
+    os.makedirs(getattr(config, 'CAPTURES_DIR', 'capturas'), exist_ok=True)
+
 
 def cargar_patentes_locales():
     """Carga la lista de patentes autorizadas desde el archivo local."""
@@ -43,11 +46,11 @@ def guardar_en_cola_reportes(img_path, patente, estado):
     final_img_path = os.path.join(config.PENDING_DIR, img_name)
     
     try:
-        # Movimiento atómico de la imagen temporal a la carpeta de pendientes
+        # Copia de la imagen capturada a la carpeta de pendientes para el reporte
         if os.path.exists(img_path):
-            os.replace(img_path, final_img_path)
+            shutil.copy2(img_path, final_img_path)
         else:
-            print(f"⚠️ Advertencia: No se encontró la imagen temporal {img_path} para mover.")
+            print(f"⚠️ Advertencia: No se encontró la imagen {img_path} para la cola de reportes.")
             
         metadata = {
             "timestamp": datetime.now().isoformat(),

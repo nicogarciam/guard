@@ -14,7 +14,7 @@ def probar_camara():
         return False
         
     print("⏳ Ajustando exposición y capturando cuadro...")
-    time.sleep(1)
+    time.sleep(10)
     
     ret, frame = cap.read()
     cap.release()
@@ -23,7 +23,10 @@ def probar_camara():
         print("❌ Error: El dispositivo respondió pero no entregó una imagen válida.")
         return False
         
-    output_filename = "test_foto.jpg"
+    capturas_dir = getattr(config, 'CAPTURES_DIR', 'capturas')
+    import os
+    os.makedirs(capturas_dir, exist_ok=True)
+    output_filename = os.path.join(capturas_dir, "test_foto.jpg")
     cv2.imwrite(output_filename, frame)
     alto, ancho, canales = frame.shape
     print(f"✅ ¡Captura EXITOSA! Foto guardada como '{output_filename}' ({ancho}x{alto} px).")
