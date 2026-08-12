@@ -30,7 +30,7 @@ def capturar_y_procesar():
         cv2.imwrite(img_temp_path, frame)
         resultado_lpr = detectar_patente(img_temp_path)
         
-        if success:
+        if resultado_lpr and resultado_lpr.get("plate"):
             patente_detectada = resultado_lpr["plate"]
             authorized = plate_validator.validar_patente(resultado_lpr)
             

@@ -3,7 +3,10 @@ ssh ngarciam@192.168.0.242
 # Config
 
 https://console.hivemq.cloud/
-https://cloud.openalpr.com/
+
+https://app.platerecognizer.com/
+
+https://api.platerecognizer.com/v1/plate-reader/
 
 
 
