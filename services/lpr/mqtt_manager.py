@@ -2,7 +2,7 @@
 import json
 from datetime import datetime
 import paho.mqtt.client as mqtt
-import config
+from core import config
 
 mqtt_client = None
 _on_abrir_callback = None

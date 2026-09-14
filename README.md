@@ -1,69 +1,94 @@
-ssh ngarciam@192.168.0.242
+# Proyecto Guard (LPR & Webcams)
 
-# Config
+Este proyecto maneja la seguridad y accesos del predio, compuesto actualmente por dos servicios principales mediante una arquitectura de *Monorepo*:
 
-https://console.hivemq.cloud/
+1. **LPR Service (Reconocimiento de Patentes):** Control de acceso vehicular mediante cámaras, validación y apertura de barrera.
+2. **Webcams Service (Streaming Online):** Transmisión y visualización de cámaras de seguridad en tiempo real.
 
-https://app.platerecognizer.com/
+## Estructura del Proyecto (Monorepo)
 
-https://api.platerecognizer.com/v1/plate-reader/
+```text
+guard/
+├── core/                     # Lógica e infraestructura compartida
+│   ├── camera_manager.py     # Manejo y reconexión de cámaras RTSP/HTTP
+│   ├── storage.py            # Guardado de eventos o bases de datos locales
+│   ├── api_client.py         # Interacción con APIs externas
+│   └── config.py             # Configuración general y de entorno
+│
+├── services/                 # Aplicaciones independientes
+│   ├── lpr/                  # Servicio actual de patentes
+│   │   ├── main.py           # Entrypoint del LPR
+│   │   ├── lpr_processor.py  # Detección y análisis
+│   │   ├── hardware.py       # Control de barreras/PIR
+│   │   ├── mqtt_manager.py   # Eventos de red
+│   │   └── patentes.json     # BD local de autorizados
+│   │
+│   └── webcams/              # Nuevo servicio de streaming
+│       ├── main.py           # Entrypoint de Webcams
+│       └── stream_server.py  # Servidor de video (en desarrollo)
+│
+├── guard.service             # Unit file systemd para LPR
+└── README.md                 # Este documento
+```
 
-file:///D:/workspace/guard/client/mqtt_client.html
+---
 
+## Enlaces Útiles
+- HiveMQ: https://console.hivemq.cloud/
+- PlateRecognizer Dashboard: https://app.platerecognizer.com/
+- PlateRecognizer API: https://api.platerecognizer.com/v1/plate-reader/
 
+## Configuración del Entorno (Raspberry Pi / Linux)
 
+### 1. Librerías de Python e Instalación Base
+```bash
 sudo apt update
-sudo apt install python3-opencv python3-gpiozero -y
-sudo apt install python3-pip -y
-pip3 install requests paho-mqtt opencv-python-headless gpiozero
-pip3 install paho-mqtt
+sudo apt install python3-opencv python3-gpiozero python3-pip -y
+pip3 install requests paho-mqtt opencv-python-headless gpiozero pytesseract
+```
 
-sudo apt install openalpr openalpr-daemon openalpr-utils libopenalpr-dev
-
-python3 -c "import cv2, requests, paho.mqtt.client, gpiozero; print('✅ ¡Todas las librerías instaladas correctamente!')"
-
-
-# Actualizar e instalar Tesseract OCR y sus datos en español/inglés
-sudo apt-get update
+### 2. Tesseract OCR y OpenALPR (Reconocimiento Local)
+```bash
 sudo apt-get install tesseract-ocr tesseract-ocr-spa tesseract-ocr-eng -y
+sudo apt install openalpr openalpr-daemon openalpr-utils libopenalpr-dev
+```
 
-# Instalar la librería de Python (asegúrate de estar en tu entorno virtual si usas uno)
-pip install pytesseract opencv-python-headless
+### 3. Verificar instalación
+```bash
+python3 -c "import cv2, requests, paho.mqtt.client, gpiozero; print('✅ ¡Todas las librerías instaladas correctamente!')"
+```
 
+## Limpieza Automática (Cron)
+Para evitar llenar el disco con fotos de intentos fallidos, agregar al crontab (`crontab -e`):
+```cron
 0 3 * * * find /ruta/a/tu/carpeta/pendientes_uploads -type f -name "*.jpg" -mtime +7 -delete
 0 3 * * * find /ruta/a/tu/carpeta/pendientes_uploads -type f -name "*.json" -mtime +7 -delete
+```
 
+---
 
+## Ejecución de Servicios
 
-python3 test_pir_camara.py
+### Configuración de Cámaras (Webcams)
+El servicio de webcams utiliza `cameras.json` (ubicado en la raíz) para saber qué cámaras transmitir. Este archivo se debe llenar con los nombres y las URLs RTSP/HTTP.
+El propio script de Python se encargará de descargar `go2rtc` y crear su archivo de configuración basándose en este JSON.
 
-sudo python3 main.py
+### Modo Manual
+**LPR (Patentes):**
+```bash
+sudo python3 services/lpr/main.py
+```
+**Webcams (Streaming):**
+```bash
+sudo python3 services/webcams/main.py
+```
 
-# Gestión del Servicio (Systemd)
+### Gestión de Servicios (Systemd)
 
-Para administrar el servicio `guard`, utiliza los siguientes comandos:
+Para administrar los servicios en background, utiliza los siguientes comandos (cambiar `guard` por `guard-webcams` según corresponda):
 
-- **Ver el estado del servicio:**
-  ```bash
-  sudo systemctl status guard
-  ```
-
-- **Iniciar el servicio:**
-  ```bash
-  sudo systemctl start guard
-  ```
-
-- **Detener el servicio:**
-  ```bash
-  sudo systemctl stop guard
-  ```
-
-- **Reiniciar el servicio:**
-  ```bash
-  sudo systemctl restart guard
-  ```
-
-- **Ver los logs en tiempo real:**
-  ```bash
-  sudo journalctl -u guard -f
-  ```
+- **Ver el estado:** `sudo systemctl status guard`
+- **Iniciar:** `sudo systemctl start guard`
+- **Detener:** `sudo systemctl stop guard`
+- **Reiniciar:** `sudo systemctl restart guard`
+- **Ver los logs en tiempo real:** `sudo journalctl -u guard -f`

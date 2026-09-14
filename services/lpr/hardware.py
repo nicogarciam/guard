@@ -1,6 +1,6 @@
 # hardware.py
 import time
-import config
+from core import config
 
 try:
     from gpiozero import MotionSensor, OutputDevice

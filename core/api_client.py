@@ -3,7 +3,7 @@ import os
 import glob
 import requests
 import json
-import config
+from core import config
 
 def descargar_patentes_autorizadas():
     """Descarga la lista de patentes autorizadas del servidor remoto."""

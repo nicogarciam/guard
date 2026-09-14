@@ -1,7 +1,7 @@
 # test_camara.py
 import cv2
 import time
-import config
+from core import config
 
 def probar_camara():
     index = getattr(config, 'CAMARA_INDEX', 0)

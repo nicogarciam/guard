@@ -1,6 +1,6 @@
 # plate_validator.py
-import config
-import storage
+from core import config
+from core import storage
 import mqtt_manager
 from datetime import datetime
 

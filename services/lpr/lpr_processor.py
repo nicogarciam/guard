@@ -6,7 +6,7 @@ import os
 import subprocess
 import json
 import requests
-import config
+from core import config
 import mqtt_manager
 from datetime import datetime
 

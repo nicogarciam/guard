@@ -3,8 +3,8 @@ import cv2
 import time
 import os
 from datetime import datetime
-import config
-import storage
+from core import config
+from core import storage
 import hardware
 from lpr_processor import detectar_patente
 import mqtt_manager

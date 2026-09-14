@@ -1,10 +1,14 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
 # main.py
 import time
 import threading
-import config
-import storage
+from core import config
+from core import storage
 import hardware
-import api_client
+from core import api_client
 import mqtt_manager
 import camera_manager
 

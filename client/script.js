@@ -278,7 +278,7 @@ function renderLogs() {
         li.className = 'message-item';
         li.dataset.id = log.id;
 
-        const timeFormatted = new Date(log.timestamp).toLocaleTimeString();
+        const timeFormatted = new Date(log.timestamp).toLocaleString();
         const directionBadge = log.direction === 'IN'
             ? `<span class="badge badge-direction-in">← Recibido</span>`
             : `<span class="badge badge-direction-out">→ Enviado</span>`;
@@ -300,6 +300,8 @@ function renderLogs() {
                 const plateClass = isMercosur ? 'plate-badge plate-badge-mercosur' : 'plate-badge';
                 plateHeaderHtml = `<span class="${plateClass}" >
                 ${escapeHtml(plate.toUpperCase())}</span>`;
+            } else if (data.event === 'LPR_DETECTION' && !data.success) {
+                plateHeaderHtml = `<span class="badge badge-unauthorized">⚠️ Sin Patente</span>`;
             }
             const cleanDsc = data.dsc ? cleanMethodName(data.dsc) : '';
 

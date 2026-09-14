@@ -3,7 +3,7 @@ import os
 import json
 import shutil
 from datetime import datetime
-import config
+from core import config
 
 def inicializar_directorios():
     """Crea las carpetas de pendientes y capturas si no existen."""
