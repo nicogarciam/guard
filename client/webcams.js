@@ -1,12 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Si abrimos el archivo localmente (file://), usamos localhost. 
-    // Si lo servimos desde un webserver, usamos su IP.
-    const host = (window.location.hostname === '' || window.location.hostname === 'localhost') 
-        ? '127.0.0.1' 
-        : window.location.hostname;
-    
-    const go2rtcPort = '1984';
-    const baseUrl = `http://${host}:${go2rtcPort}`;
+    // Si abrimos por HTTPS (Cloudflare), usamos rutas relativas para evitar el Mixed Content.
+    // Si estamos en local (HTTP), le pegamos al puerto 1984 directo.
+    const isProd = window.location.protocol === 'https:';
+    const host = (window.location.hostname === '' || window.location.hostname === 'localhost') ? '127.0.0.1' : window.location.hostname;
+    const baseUrl = isProd ? '' : `http://${host}:1984`;
     
     const statusBadge = document.getElementById('connection-status');
     const countBadge = document.getElementById('camera-count');
@@ -126,8 +123,15 @@ document.addEventListener('DOMContentLoaded', () => {
             video.onwaiting = () => spinner.style.display = 'block';
             video.onstalled = () => spinner.style.display = 'block';
             
+            const watermark = document.createElement('a');
+            watermark.className = 'camera-watermark';
+            watermark.href = 'https://www.instagram.com/bahiacreek.elprincipito/?hl=es';
+            watermark.target = '_blank';
+            watermark.innerHTML = '@bahiacreek.elprincipito';
+            
             feed.appendChild(spinner);
             feed.appendChild(video);
+            feed.appendChild(watermark);
             
             card.appendChild(header);
             card.appendChild(feed);

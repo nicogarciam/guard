@@ -1,9 +1,21 @@
+ssh ngarciam@192.168.0.242
+pass: Ng123qwe.
+
 # Proyecto Guard (LPR & Webcams)
 
 Este proyecto maneja la seguridad y accesos del predio, compuesto actualmente por dos servicios principales mediante una arquitectura de *Monorepo*:
 
 1. **LPR Service (Reconocimiento de Patentes):** Control de acceso vehicular mediante cámaras, validación y apertura de barrera.
 2. **Webcams Service (Streaming Online):** Transmisión y visualización de cámaras de seguridad en tiempo real.
+3. **Frontend (Dashboards):** Interfaz web para visualizar las cámaras y los eventos LPR.
+
+## Accesos Rápidos (URLs de Producción)
+
+Una vez que los servicios están corriendo en la Raspberry (IP `192.168.0.242`), podés acceder a los dashboards desde cualquier dispositivo en la misma red:
+
+- **Dashboard de Cámaras (En vivo):** [http://192.168.0.242:8080/webcams.html](http://192.168.0.242:8080/webcams.html)
+- **Dashboard LPR (Eventos MQTT):** [http://192.168.0.242:8080/mqtt_client.html](http://192.168.0.242:8080/mqtt_client.html)
+- **API interna de go2rtc (Diagnóstico):** [http://192.168.0.242:1984/](http://192.168.0.242:1984/)
 
 ## Estructura del Proyecto (Monorepo)
 
@@ -88,7 +100,7 @@ sudo python3 services/webcams/main.py
 
 ### Gestión de Servicios (Systemd)
 
-Para administrar los servicios en background, utiliza los siguientes comandos (cambiar `guard` por `guard-webcams` según corresponda):
+Para administrar los servicios en background, utiliza los siguientes comandos (reemplazar `guard` por `guard-webcams` o `guard-client` según corresponda):
 
 - **Ver el estado:** `sudo systemctl status guard`
 - **Iniciar:** `sudo systemctl start guard`

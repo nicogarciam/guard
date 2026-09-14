@@ -1,0 +1,18 @@
+[Unit]
+Description=Guard - Frontend (Dashboards de Clientes)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ngarciam
+WorkingDirectory=/home/ngarciam/guard/client
+# Levantamos el servidor de Python en el puerto 8080
+ExecStart=/usr/bin/python3 -m http.server 8080
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
