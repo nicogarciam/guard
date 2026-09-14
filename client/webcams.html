@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guard Webcams - Centro de Monitoreo</title>
+    <!-- Fuentes premium de Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="webcams.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Header -->
+        <header class="header">
+            <div class="logo-container">
+                <div class="pulse-dot"></div>
+                <h1>GUARD <span>Monitoreo</span></h1>
+            </div>
+            <div class="status-panel">
+                <span id="connection-status" class="status-badge connecting">Conectando...</span>
+                <span id="camera-count" class="status-badge">0 Cámaras</span>
+            </div>
+        </header>
+
+        <!-- Grilla de Cámaras -->
+        <main class="cameras-grid" id="cameras-grid">
+            <!-- Las cámaras se inyectan acá dinámicamente -->
+        </main>
+    </div>
+
+    <!-- Script de lógica -->
+    <script src="webcams.js"></script>
+</body>
+</html>

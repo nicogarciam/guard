@@ -73,6 +73,9 @@ Para evitar llenar el disco con fotos de intentos fallidos, agregar al crontab (
 El servicio de webcams utiliza `cameras.json` (ubicado en la raíz) para saber qué cámaras transmitir. Este archivo se debe llenar con los nombres y las URLs RTSP/HTTP.
 El propio script de Python se encargará de descargar `go2rtc` y crear su archivo de configuración basándose en este JSON.
 
+**Visualización del Cliente:**
+Una vez iniciado el servicio de webcams, simplemente abrí el archivo `client/webcams.html` en cualquier navegador web. El cliente buscará dinámicamente qué cámaras están configuradas y las renderizará en una grilla usando WebRTC para latencia cero.
+
 ### Modo Manual
 **LPR (Patentes):**
 ```bash

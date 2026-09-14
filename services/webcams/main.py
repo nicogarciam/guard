@@ -76,10 +76,11 @@ def generate_yaml():
     yaml_data = {
         "streams": cameras,
         "api": {
-            "listen": ":1984" # Interfaz web de go2rtc
+            "listen": ":1984",
+            "origin": "*"
         },
         "webrtc": {
-            "listen": ":8555" # Puerto para WebRTC
+            "listen": ":8555"
         }
     }
     
