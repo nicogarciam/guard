@@ -37,6 +37,15 @@ if __name__ == "__main__":
     # 3. Iniciar el cliente MQTT (pasando callback de apertura remota)
     mqtt_manager.iniciar_mqtt(on_abrir_callback=hardware.abrir_porton)
     
+    # Esperar un poco a que MQTT se conecte para enviar los datos de inicio
+    time.sleep(2)
+    datos_inicio = {
+        "evento": "sistema_iniciado",
+        "patentes_cargadas": len(patentes_actuales),
+        "timestamp": time.time()
+    }
+    mqtt_manager.publicar_mensaje(config.TOPIC_EVENTO, datos_inicio)
+    
     # 4. Lanzar hilos de red en segundo plano (daemon threads)
     threading.Thread(target=hilo_actualizacion_patentes, daemon=True).start()
     threading.Thread(target=hilo_subida_reportes, daemon=True).start()

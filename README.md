@@ -8,6 +8,8 @@ https://app.platerecognizer.com/
 
 https://api.platerecognizer.com/v1/plate-reader/
 
+file:///D:/workspace/guard/client/mqtt_client.html
+
 
 
 sudo apt update
@@ -37,3 +39,31 @@ python3 test_pir_camara.py
 
 sudo python3 main.py
 
+# Gestión del Servicio (Systemd)
+
+Para administrar el servicio `guard`, utiliza los siguientes comandos:
+
+- **Ver el estado del servicio:**
+  ```bash
+  sudo systemctl status guard
+  ```
+
+- **Iniciar el servicio:**
+  ```bash
+  sudo systemctl start guard
+  ```
+
+- **Detener el servicio:**
+  ```bash
+  sudo systemctl stop guard
+  ```
+
+- **Reiniciar el servicio:**
+  ```bash
+  sudo systemctl restart guard
+  ```
+
+- **Ver los logs en tiempo real:**
+  ```bash
+  sudo journalctl -u guard -f
+  ```
